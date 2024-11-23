@@ -1,0 +1,40 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<nlog xmlns="http://www.nlog-project.org/schemas/NLog.xsd"
+      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	
+	<extensions>
+		<add assembly="NLogViewer"/>
+	</extensions>
+
+	<variable name="logDirectory" value="Logs"/>
+
+	<targets async="true">
+		<default-wrapper xsi:type="AsyncWrapper" overflowAction="Block" />
+
+		<target xsi:type="ColoredConsole"
+				name="console"
+				layout="[${longdate}](${level:uppercase=true}) ${logger}: ${message} ${all-event-properties}"
+				/>
+		<target name="debugger" xsi:type="Debugger" layout="(${level:uppercase=true}) ${logger}: ${message}"/>
+		
+
+		<target xsi:type="File"
+				name="file"
+				fileName="${logDirectory}/log.txt"
+				layout="[${longdate}](${level:uppercase=true}) ${logger}: ${message} ${all-event-properties}"
+				archiveFileName="${logDirectory}/log.{#}.txt"
+				archiveNumbering="Date"
+				archiveEvery="Day"
+				archiveDateFormat="yyyyMMdd" />
+		
+		<target xsi:type="CacheTarget" name="cache"/>
+
+	</targets>
+	<rules>
+		<logger name="*" minlevel="Trace" writeTo="console" />
+		<logger name="*" minlevel="Debug" writeTo="file" />
+		<logger name="*" minlevel="Trace" writeTo="debugger" />
+		<logger name="*" minlevel="Trace" writeTo="cache" />
+	</rules>
+
+</nlog>
